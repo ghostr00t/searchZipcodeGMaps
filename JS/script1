@@ -1,0 +1,138 @@
+$(document).ready(function () {
+    locateTask.terminal();
+
+    
+    
+});
+
+var Task = function () {};
+
+var locateTask = new Task();
+
+var retrievedData = localStorage.getItem("meetupLS");
+
+Task.prototype.cityArray = JSON.parse(retrievedData);
+
+
+Task.prototype.meetupAjax = function () {
+    $.ajax({
+        type: "GET",
+        dataType: 'jsonp',
+        url: "https://api.meetup.com/2/cities",
+        success: function (data) {
+            localStorage["meetupLS"] = JSON.stringify(data.results);        
+        }
+    });
+};
+
+Task.prototype.queryZip = function (zipCode) {
+    for (var i = 0; i < this.cityArray.length; i++) {
+        if (this.cityArray[i].zip == zipCode) {
+            console.log(this.cityArray[i].lat, this.cityArray[i].lon);
+            initMap(this.cityArray[i].lon, this.cityArray[i].lat);
+        }
+    }
+}
+
+Task.prototype.terminal = function () {
+    $("#screen input").focus();
+    $("#screen input").on('keydown', function (event) {
+        if (event.which === 13) {
+            var $this = $(this),
+                val = $this.val();
+            $this.focus().val('');
+            if (val === "Travie is cool") {
+                alert("YAAAAAAS!");
+            }
+        }
+    });
+}
+
+
+function initMap(usr1, usr2) {
+  console.log(usr1, usr2);
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat:  parseInt(usr2), lng:  parseInt(usr1)},
+          zoom: 12,
+          styles: [
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+            {
+              featureType: 'administrative.locality',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'geometry',
+              stylers: [{color: '#263c3f'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#6b9a76'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#38414e'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#212a37'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#9ca5b3'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#746855'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#1f2835'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#f3d19c'}]
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{color: '#2f3948'}]
+            },
+            {
+              featureType: 'transit.station',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#17263c'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#515c6d'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{color: '#17263c'}]
+            }
+          ]
+        });
+      }
